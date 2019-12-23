@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
 
 namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
@@ -8,20 +9,30 @@ namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
     {
         delegate Product ProductProcessStep(Product input);
 
-        static void Main(string[] args)
+        public static string GetProductJson(long id)
         {
-            var product = new Product{ id = 1234567 };
+            var product = new Product{ id = id };
 
-            var pipeline = new List<Func<Product, Product>>
+            var steps = new List<Func<Product, Product>>
             {
                 ProductFunctions.GetProduct,
                 CommunityFunctions.GetRatings,
+                product =>
+                {
+                    product.ratings = FilterRatings(product.ratings, 3);
+                    return product;
+                },
                 CommunityFunctions.GetComments
             };
 
-            var result = PipelineFunctions<Product>.Execute(product, pipeline);
+            var result = PipelineFunctions<Product>.Execute(product, steps);
 
-            Console.Write(JsonSerializer.Serialize(result));
+            return JsonSerializer.Serialize(result);
+        }
+
+        static List<Rating> FilterRatings(List<Rating> ratings, int starThreshold)
+        {
+            return ratings.Where(r => r.stars >= starThreshold).ToList();
         }
     }
 }
