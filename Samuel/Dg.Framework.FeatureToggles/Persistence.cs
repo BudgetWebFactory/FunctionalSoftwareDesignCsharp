@@ -12,7 +12,7 @@ namespace Dg.Framework.FeatureToggles
             };
     }
 
-    internal readonly struct FeatureToggle
+    public readonly struct FeatureToggle
     {
         public readonly string Id;
         public readonly bool IsActive;

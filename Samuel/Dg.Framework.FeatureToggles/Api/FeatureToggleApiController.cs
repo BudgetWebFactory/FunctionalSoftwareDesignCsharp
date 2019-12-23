@@ -1,27 +1,36 @@
-using System;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using static Dg.Framework.FeatureToggles.Persistence;
-using static Dg.Framework.FeatureToggles.Transformations;
-
+using Chabis.Functional;
+using static Dg.Framework.FeatureToggles.BusinessRules;
+using System.Net;
+using System.Collections.Generic;
 
 namespace Dg.Framework.FeatureToggles.Api
 {
     public class FeatureToggleApiController : ControllerBase
     {
-        [Route("v1/featureToggles/{featureToggleId}/users/{userId}")]
-        public IActionResult Get([FromRoute] string featureToggleId, [FromRoute] int userId)
+        public delegate IList<FeatureToggle> LoadFeatureToggles();
+
+        private readonly LoadFeatureToggles loadFeatureToggles;
+
+        public FeatureToggleApiController(LoadFeatureToggles loadFeatureToggles)
         {
-            var featureToggles = LoadAll().Where(ft => ft.Id == featureToggleId).ToList();
-            var ft = featureToggles.Count() == 1 ? (FeatureToggle?)featureToggles[0] : null;
-            if (ft == null)
-            {
-                return NotFound();
-            }
+            this.loadFeatureToggles = loadFeatureToggles;
+        }
 
-            var activeStatus = ToActiveStatusForUser(ft.Value, userId);
+        [Route("v1/featureToggles/{featureToggleId}/users/{userId}")]
+        public IActionResult Get([FromRoute] string featureToggleId, [FromRoute] int userId) =>
+            GetFeatureToggle(featureToggleId)
+                .Map(ft => IsActiveForUser(ft, userId))
+                .Map(active => new FeatureToggleResponse(featureToggleId, active))
+                .Match<IActionResult>(Ok, err => StatusCode((int)err));
 
-            return Ok(new FeatureToggleResponse(activeStatus.FeatureToggleId, activeStatus.IsActive));
+        private Result<FeatureToggle, HttpStatusCode> GetFeatureToggle(string featureToggleId)
+        {
+            var featureToggle = loadFeatureToggles().Where(ft => ft.Id == featureToggleId).ToList();
+            return featureToggle.Count == 1
+                ? (Result<FeatureToggle, HttpStatusCode>)featureToggle[0]
+                : HttpStatusCode.NotFound;
         }
     }
 }
