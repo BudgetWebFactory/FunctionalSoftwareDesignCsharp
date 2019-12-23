@@ -8,6 +8,7 @@ namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
         public string title { get; set; }
         public List<Rating> ratings { get; set; }
         public List<Comment> comments { get; set; }
+        public string Serialized { get; set; }
 
         public Product()
         {

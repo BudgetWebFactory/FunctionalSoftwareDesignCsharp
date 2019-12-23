@@ -1,5 +1,4 @@
 using System;
-using System.Reflection;
 
 namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
 {
@@ -7,8 +6,13 @@ namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
     {
         static void Main(string[] args)
         {
-            var productJson = ProductEndpoint.GetProductJson(1234567);
-            Console.WriteLine(productJson);
+            /*
+            var product = ProductEndpointFunctions.GetProduct(55555);
+            product = ProductEndpointFunctions.Serialize(product);
+            Console.WriteLine(product.Serialized);*/
+
+            var productDelegate = ProductEndpointFunctions.GetProductDelegate(666666);
+            Console.WriteLine(productDelegate.Serialized);
         }
     }
 }

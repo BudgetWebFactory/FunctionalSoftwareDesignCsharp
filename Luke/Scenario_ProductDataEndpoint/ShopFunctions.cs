@@ -8,11 +8,9 @@ namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
         {
             // Mocking
 
-            return new Product
-            {
-                id = product.id,
-                title = "Fancy New"
-            };
+            product.title = "Fancy Hancy";
+
+            return product;
         }
     }
 
