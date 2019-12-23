@@ -8,11 +8,9 @@ namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
         {
             // Mocking
 
-            return new Product
-            {
-                id = product.id,
-                title = "Fancy New"
-            };
+            product.title = "Fancy Hancy";
+
+            return product;
         }
     }
 
@@ -22,25 +20,22 @@ namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
         {
             // Mocking
 
-            product.extras.Add(
-                "ratings",
-                new List<Rating>
-                {
-                    new Rating
+            product.ratings.Add(
+                new Rating
                     {
                         id = 99999,
                         productId = product.id,
                         userId = 2008448,
-                        stars = 3
-                    },
-                    new Rating
-                    {
-                        productId = product.id,
-                        userId = 1234567,
-                        stars = 4
+                        stars = 2
                     }
-                }
-            );
+                );
+            product.ratings.Add(
+                new Rating
+                {
+                    productId = product.id,
+                    userId = 1234567,
+                    stars = 4
+                });
 
             return product;
         }
@@ -49,15 +44,11 @@ namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
         {
             // Mocking
 
-            product.extras.Add(
-                "comments",
-                new List<Comment>
+            product.comments.Add(
+                new Comment
                 {
-                    new Comment
-                    {
-                        id = 111111,
-                        text = "Ho ho ho!"
-                    }
+                    id = 111111,
+                    text = "Ho ho ho!"
                 }
              );
 

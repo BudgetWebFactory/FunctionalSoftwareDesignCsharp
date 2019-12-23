@@ -6,12 +6,14 @@ namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
     {
         public long id { get; set; }
         public string title { get; set; }
-
-        public IDictionary<string, object> extras { get; set; }
+        public List<Rating> ratings { get; set; }
+        public List<Comment> comments { get; set; }
+        public string Serialized { get; set; }
 
         public Product()
         {
-            extras = new Dictionary<string, object>();
+            ratings = new List<Rating>();
+            comments = new List<Comment>();
         }
     }
 }
