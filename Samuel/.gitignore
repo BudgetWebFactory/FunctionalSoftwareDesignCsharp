@@ -10,6 +10,7 @@
 # Common node modules locations
 /node_modules
 /wwwroot/node_modules
+!lib
 
 
 ### Rider ###
@@ -282,6 +283,7 @@ PublishScripts/
 
 # NuGet Packages
 *.nupkg
+!lib/**/*.nupkg
 # NuGet Symbol Packages
 *.snupkg
 # The packages folder can be ignored because of Package Restore
