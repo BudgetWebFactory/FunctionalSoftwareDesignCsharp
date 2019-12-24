@@ -1,24 +1,21 @@
+using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
 
 namespace Dg.OnlineShop.OrderingProcess.ShoppingCart.Api
 {
-    public readonly struct AddProductToCartRequest
+    public class AddProductToCartRequest
     {
-        public readonly int ProductId { get; }
-        public readonly int Quantity { get; }
-        public readonly int? SecondHandSalesOfferId { get; }
-        public readonly int? SubscriptionItemProductId { get; }
-        public readonly int? MarketplaceSupplierId { get; }
+        [Required]
+        public int ProductId { get; set; }
 
-        public AddProductToCartRequest(int productId, int quantity, int secondHandSalesOfferId, int subscriptionItemProductId, int marketplaceSupplierId)
-        {
-            ProductId = productId;
-            Quantity = quantity;
-            SecondHandSalesOfferId = secondHandSalesOfferId;
-            SubscriptionItemProductId = subscriptionItemProductId;
-            MarketplaceSupplierId = marketplaceSupplierId;
-        }
+        [Required]
+        [Range(1, 999)]
+        public int Quantity { get; set; }
 
-        public override string ToString() => JsonConvert.SerializeObject(this);
+        public int? SecondHandSalesOfferId { get; set; }
+
+        public int? SubscriptionItemProductId { get; set; }
+
+        public int? MarketplaceSupplierId { get; set; }
     }
 }
