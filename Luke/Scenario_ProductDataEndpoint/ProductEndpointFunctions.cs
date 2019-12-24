@@ -28,26 +28,20 @@ namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
             return PipelineFunctions<Product>.Execute(new Product{ id = id }, steps);
         }
 
-        public static Product GetProductSavely(long id)
+        public static Product GetProductSafely(long id)
         {
             var steps = new List<(Func<Product, Product> fn, ErrorFunctions.ErrorFunction errorFn)>
             {
                 (ProductFunctions.GetProductWithError, HandleProductError),
-                (Serialize, e => new ErrorCase{ message = "Serialization error", exception = e })
+                (Serialize, e => Console.WriteLine(e))
             };
 
-            return PipelineFunctions<Product>.ExecuteSavely(new Product{ id = id }, steps);
+            return PipelineFunctions<Product>.ExecuteSafely(new Product{ id = id }, steps);
         }
 
-        private static ErrorCase HandleProductError(Exception e)
+        private static void HandleProductError(Exception e)
         {
             Console.WriteLine("errroooooroooo", e);
-
-            return new ErrorCase
-            {
-                message = "Something went wrong getting product",
-                exception = e
-            };
         }
 
         public static Product GetProductDelegate(long id)

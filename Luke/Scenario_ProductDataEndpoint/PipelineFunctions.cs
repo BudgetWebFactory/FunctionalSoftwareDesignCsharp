@@ -11,7 +11,7 @@ namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
             return steps.Aggregate(source, (temp, next) => next(temp));
         }
 
-        public static TContract ExecuteSavely(
+        public static TContract ExecuteSafely(
             TContract source,
             List<(Func<TContract, TContract> fn, ErrorFunctions.ErrorFunction errorFn)> steps)
         {

@@ -11,7 +11,7 @@ namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
             //var product = ProductEndpointFunctions.GetProduct(55555);
             //Console.WriteLine(product.Serialized);
 
-            var productSavely = ProductEndpointFunctions.GetProductSavely(333); // with error handling
+            var productSavely = ProductEndpointFunctions.GetProductSafely(333); // with error handling
             Console.WriteLine(productSavely.Serialized);
 
             /* DELEGATE VERSION
