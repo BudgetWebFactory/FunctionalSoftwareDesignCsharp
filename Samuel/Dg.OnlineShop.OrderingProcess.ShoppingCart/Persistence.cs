@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Chabis.Functional;
 using Newtonsoft.Json;
 
@@ -6,9 +7,9 @@ namespace Dg.OnlineShop.OrderingProcess.ShoppingCart
 {
     public static class Persistence
     {
-        private static IDictionary<int, ShoppingCart> bla = new Dictionary<int, ShoppingCart>
+        private static IDictionary<int, Cart> carts = new Dictionary<int, Cart>
             {
-                { 1, new ShoppingCart(
+                { 1, new Cart(
                     userId: 1,
                     items: new List<ShoppingCartItem>
                     {
@@ -23,18 +24,24 @@ namespace Dg.OnlineShop.OrderingProcess.ShoppingCart
                 ) }
             };
 
-        public static Option<ShoppingCart> LoadShoppingCart(int userId) =>
-            bla.ContainsKey(userId)
-                ? Option<ShoppingCart>.Some(bla[userId])
-                : Option<ShoppingCart>.None;
+        public static Option<Cart> LoadShoppingCart(int userId) =>
+            carts.ContainsKey(userId)
+                ? Option<Cart>.Some(carts[userId])
+                : Option<Cart>.None;
+
+        public static Result<Cart, ErrorType> CreateShoppingCart(int userId) =>
+            carts.ContainsKey(userId)
+                ? (Result<Cart, ErrorType>)ErrorType.CartAlreadyExists
+                : (carts = carts.Append(KeyValuePair.Create(1, new Cart(userId, new List<ShoppingCartItem>())))
+                    .ToDictionary(e => e.Key, e => e.Value))[userId];
     }
 
-    public readonly struct ShoppingCart
+    public readonly struct Cart
     {
         public readonly int UserId;
         public readonly IList<ShoppingCartItem> Items;
 
-        public ShoppingCart(int userId, IList<ShoppingCartItem> items)
+        public Cart(int userId, IList<ShoppingCartItem> items)
         {
             UserId = userId;
             Items = items;
