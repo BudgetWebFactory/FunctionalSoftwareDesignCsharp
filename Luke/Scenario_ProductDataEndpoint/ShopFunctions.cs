@@ -54,5 +54,22 @@ namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
 
             return product;
         }
+
+        public static List<Comment> GetComments(long productId)
+        {
+            // Mocking
+
+            var comments = new List<Comment>();
+
+            comments.Add(
+                new Comment
+                {
+                    id = 111111,
+                    text = "Ho ho ho!"
+                }
+            );
+
+            return comments;
+        }
     }
 }

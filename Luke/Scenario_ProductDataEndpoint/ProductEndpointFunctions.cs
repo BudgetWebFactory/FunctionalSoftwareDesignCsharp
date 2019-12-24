@@ -31,7 +31,7 @@ namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
         {
             var pipeline = (ProductProcessStep)
                 ProductFunctions.GetProduct +
-                GetCommunity +
+                GetComments +
                 (product =>
                     {
                         product.ratings = FilterRatings(product.ratings, 3);
@@ -45,6 +45,13 @@ namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
         static List<Rating> FilterRatings(List<Rating> ratings, int starThreshold)
         {
             return ratings.Where(r => r.stars >= starThreshold).ToList();
+        }
+
+        static Product GetComments(Product product)
+        {
+            product.comments = CommunityFunctions.GetComments(product.id);
+
+            return product;
         }
 
         static Product Serialize(Product product)
