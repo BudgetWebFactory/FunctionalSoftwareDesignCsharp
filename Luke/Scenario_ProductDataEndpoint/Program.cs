@@ -6,13 +6,27 @@ namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
     {
         static void Main(string[] args)
         {
-            /*
-            var product = ProductEndpointFunctions.GetProduct(55555);
-            product = ProductEndpointFunctions.Serialize(product);
-            Console.WriteLine(product.Serialized);*/
+            // CUSTOM PIPELINE VERSION
 
-            var productDelegate = ProductEndpointFunctions.GetProductDelegate(666666);
-            Console.WriteLine(productDelegate.Serialized);
+            //var product = ProductEndpointFunctions.GetProduct(55555);
+            //Console.WriteLine(product.Serialized);
+
+            var productSavely = ProductEndpointFunctions.GetProductSavely(333); // with error handling
+            Console.WriteLine(productSavely.Serialized);
+
+            /* DELEGATE VERSION
+
+            try
+            {
+                var productDelegate = ProductEndpointFunctions.GetProductDelegate(666666);
+
+                Console.WriteLine(productDelegate.Serialized);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                Console.WriteLine("error response.");
+            }*/
         }
     }
 }

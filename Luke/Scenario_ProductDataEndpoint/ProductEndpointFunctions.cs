@@ -7,7 +7,8 @@ namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
 {
     static class ProductEndpointFunctions
     {
-        private delegate Product ProductProcessStep(Product input);
+        delegate Product PipelineStep(Product input);
+        delegate Product PipelineStepWithError(Product input, ErrorFunctions.ErrorFunction errorFn);
 
         public static Product GetProduct(long id)
         {
@@ -27,13 +28,36 @@ namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
             return PipelineFunctions<Product>.Execute(new Product{ id = id }, steps);
         }
 
+        public static Product GetProductSavely(long id)
+        {
+            var steps = new List<(Func<Product, Product> fn, ErrorFunctions.ErrorFunction errorFn)>
+            {
+                (ProductFunctions.GetProductWithError, HandleProductError),
+                (Serialize, e => new ErrorCase{ message = "Serialization error", exception = e })
+            };
+
+            return PipelineFunctions<Product>.ExecuteSavely(new Product{ id = id }, steps);
+        }
+
+        private static ErrorCase HandleProductError(Exception e)
+        {
+            Console.WriteLine("errroooooroooo", e);
+
+            return new ErrorCase
+            {
+                message = "Something went wrong getting product",
+                exception = e
+            };
+        }
+
         public static Product GetProductDelegate(long id)
         {
-            var pipeline = (ProductProcessStep)
+            var pipeline = (PipelineStep)
                 ProductFunctions.GetProduct +
-                GetCommunity +
+                GetComments +
                 (product =>
                     {
+                        throw new Exception("nooooooooo!!!!");
                         product.ratings = FilterRatings(product.ratings, 3);
                         return product;
                     }) +
@@ -47,7 +71,14 @@ namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
             return ratings.Where(r => r.stars >= starThreshold).ToList();
         }
 
-        static Product Serialize(Product product)
+        static Product GetComments(Product product)
+        {
+            product.comments = CommunityFunctions.GetComments(product.id);
+
+            return product;
+        }
+
+        public static Product Serialize(Product product)
         {
             product.Serialized = JsonSerializer.Serialize(product);
 
@@ -56,7 +87,7 @@ namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
 
         static Product GetCommunity(Product product)
         {
-            var pipeline = (ProductProcessStep)
+            var pipeline = (PipelineStep)
                CommunityFunctions.GetRatings +
                CommunityFunctions.GetComments;
 
