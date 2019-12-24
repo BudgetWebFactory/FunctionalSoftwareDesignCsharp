@@ -1,4 +1,5 @@
 using System.Diagnostics.Contracts;
+using System.Linq;
 using System.Net;
 using Chabis.Functional;
 using Microsoft.AspNetCore.Http;
@@ -9,8 +10,8 @@ namespace Dg.Framework.Security
     {
         [Pure]
         public static Result<int, HttpStatusCode> CheckUserId(HttpContext context, int userId) =>
-            (int)context.Session.GetInt32("userId") == userId
+            context.Session.Keys.Any(e => e == "userId") && (int)context.Session.GetInt32("userId") == userId
                 ? (Result<int, HttpStatusCode>)userId
-                : HttpStatusCode.Forbidden;
+                : HttpStatusCode.Unauthorized;
     }
 }
