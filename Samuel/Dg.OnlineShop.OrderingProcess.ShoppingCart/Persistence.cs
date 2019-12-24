@@ -34,6 +34,11 @@ namespace Dg.OnlineShop.OrderingProcess.ShoppingCart
                 ? (Result<Cart, ErrorType>)ErrorType.CartAlreadyExists
                 : (carts = carts.Append(KeyValuePair.Create(userId, new Cart(userId, new List<ShoppingCartItem>())))
                     .ToDictionary(e => e.Key, e => e.Value))[userId];
+
+        public static void WriteShoppingCart(Cart cart) 
+        {
+            carts[cart.UserId] = cart;
+        }
     }
 
     public readonly struct Cart

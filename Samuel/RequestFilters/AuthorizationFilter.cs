@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace Dg.Framework.Authorization
+namespace Dg.Framework.Security
 {
     public class AuthorizationFilter : IAuthorizationFilter
     {
