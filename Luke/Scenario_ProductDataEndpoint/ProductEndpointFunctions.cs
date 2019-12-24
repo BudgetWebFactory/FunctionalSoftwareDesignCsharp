@@ -7,12 +7,11 @@ namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
 {
     static class ProductEndpointFunctions
     {
-        delegate Product PipelineStep(Product input);
-        delegate Product PipelineStepWithError(Product input, ErrorFunctions.ErrorFunction errorFn);
-
-        public static Product GetProduct(long id)
+        public static ProductEndpointResult GetProduct(long id)
         {
-            var steps = new List<Func<Product, Product>>
+            // here we compose our process pipeline by selection which functions shall be a part of it
+
+            var steps = new List<Func<ProductEndpointResult, ProductEndpointResult>>
             {
                 ProductFunctions.GetProduct,
                 CommunityFunctions.GetRatings,
@@ -25,18 +24,22 @@ namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
                 Serialize
             };
 
-            return PipelineFunctions<Product>.Execute(new Product{ id = id }, steps);
+            return PipelineFunctions<ProductEndpointResult>
+                .Execute(new ProductEndpointResult{ id = id }, steps);
         }
 
-        public static Product GetProductSafely(long id)
+        public static ProductEndpointResult GetProductSafely(long id)
         {
-            var steps = new List<(Func<Product, Product> fn, ErrorFunctions.ErrorFunction errorFn)>
+            var steps = new List<(
+                Func<ProductEndpointResult, ProductEndpointResult> fn,
+                ErrorFunctions.ErrorFunction errorFn)>
             {
                 (ProductFunctions.GetProductWithError, HandleProductError),
                 (Serialize, e => Console.WriteLine(e))
             };
 
-            return PipelineFunctions<Product>.ExecuteSafely(new Product{ id = id }, steps);
+            return PipelineFunctions<ProductEndpointResult>
+                .ExecuteSafely(new ProductEndpointResult{ id = id }, steps);
         }
 
         private static void HandleProductError(Exception e)
@@ -44,7 +47,9 @@ namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
             Console.WriteLine("errroooooroooo", e);
         }
 
-        public static Product GetProductDelegate(long id)
+        delegate ProductEndpointResult PipelineStep(ProductEndpointResult input);
+
+        public static ProductEndpointResult GetProductDelegate(long id)
         {
             var pipeline = (PipelineStep)
                 ProductFunctions.GetProduct +
@@ -57,7 +62,7 @@ namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
                     }) +
                 Serialize;
 
-            return pipeline(new Product{ id = id});
+            return pipeline(new ProductEndpointResult{ id = id});
         }
 
         static List<Rating> FilterRatings(List<Rating> ratings, int starThreshold)
@@ -65,27 +70,42 @@ namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
             return ratings.Where(r => r.stars >= starThreshold).ToList();
         }
 
-        static Product GetComments(Product product)
+        static ProductEndpointResult GetComments(ProductEndpointResult productEndpointResult)
         {
-            product.comments = CommunityFunctions.GetComments(product.id);
+            productEndpointResult.comments = CommunityFunctions.GetComments(productEndpointResult.id);
 
-            return product;
+            return productEndpointResult;
         }
 
-        public static Product Serialize(Product product)
+        static ProductEndpointResult Serialize(ProductEndpointResult productEndpointResult)
         {
-            product.Serialized = JsonSerializer.Serialize(product);
+            productEndpointResult.Serialized = JsonSerializer.Serialize(productEndpointResult);
 
-            return product;
+            return productEndpointResult;
         }
 
-        static Product GetCommunity(Product product)
+        static ProductEndpointResult GetCommunity(ProductEndpointResult productEndpointResult)
         {
             var pipeline = (PipelineStep)
                CommunityFunctions.GetRatings +
                CommunityFunctions.GetComments;
 
-            return pipeline(product);
+            return pipeline(productEndpointResult);
+        }
+    }
+
+    public class ProductEndpointResult
+    {
+        public long id { get; set; }
+        public string title { get; set; }
+        public List<Rating> ratings { get; set; }
+        public List<Comment> comments { get; set; }
+        public string Serialized { get; set; }
+
+        public ProductEndpointResult()
+        {
+            ratings = new List<Rating>();
+            comments = new List<Comment>();
         }
     }
 }

@@ -1,61 +1,63 @@
 using System.Collections.Generic;
 
+// the functions in this namespace could be organized in files and classes as desired
+
 namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
 {
     public static class ProductFunctions
     {
-        public static Product GetProduct(Product product)
+        public static ProductEndpointResult GetProduct(ProductEndpointResult productEndpointResult)
         {
             // Mocking
 
-            product.title = "Fancy Hancy";
+            productEndpointResult.title = "Fancy Hancy";
 
-            return product;
+            return productEndpointResult;
         }
 
-        public static Product GetProductWithError(Product product)
+        public static ProductEndpointResult GetProductWithError(ProductEndpointResult productEndpointResult)
         {
             // Mocking
 
-            product = null;
+            productEndpointResult = null;
 
-            product.comments = new List<Comment>(); // nullpointer
+            productEndpointResult.comments = new List<Comment>(); // provoked nullpointer to show the error handling working
 
-            return product;
+            return productEndpointResult;
         }
     }
 
     public static class CommunityFunctions
     {
-        public static Product GetRatings(Product product)
+        public static ProductEndpointResult GetRatings(ProductEndpointResult productEndpointResult)
         {
             // Mocking
 
-            product.ratings.Add(
+            productEndpointResult.ratings.Add(
                 new Rating
                     {
                         id = 99999,
-                        productId = product.id,
+                        productId = productEndpointResult.id,
                         userId = 2008448,
                         stars = 2
                     }
                 );
-            product.ratings.Add(
+            productEndpointResult.ratings.Add(
                 new Rating
                 {
-                    productId = product.id,
+                    productId = productEndpointResult.id,
                     userId = 1234567,
                     stars = 4
                 });
 
-            return product;
+            return productEndpointResult;
         }
 
-        public static Product GetComments(Product product)
+        public static ProductEndpointResult GetComments(ProductEndpointResult productEndpointResult)
         {
             // Mocking
 
-            product.comments.Add(
+            productEndpointResult.comments.Add(
                 new Comment
                 {
                     id = 111111,
@@ -63,7 +65,7 @@ namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
                 }
              );
 
-            return product;
+            return productEndpointResult;
         }
 
         public static List<Comment> GetComments(long productId)

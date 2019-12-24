@@ -2,17 +2,17 @@ using System;
 
 namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
 {
-    public static class Program
+    public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             // CUSTOM PIPELINE VERSION
 
             //var product = ProductEndpointFunctions.GetProduct(55555);
             //Console.WriteLine(product.Serialized);
 
-            var productSavely = ProductEndpointFunctions.GetProductSafely(333); // with error handling
-            Console.WriteLine(productSavely.Serialized);
+            var productSafely = ProductEndpointFunctions.GetProductSafely(333); // with error handling
+            Console.WriteLine(productSafely.Serialized);
 
             /* DELEGATE VERSION
 
