@@ -12,6 +12,17 @@ namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
 
             return product;
         }
+
+        public static Product GetProductWithError(Product product)
+        {
+            // Mocking
+
+            product = null;
+
+            product.comments = new List<Comment>(); // nullpointer
+
+            return product;
+        }
     }
 
     public static class CommunityFunctions
