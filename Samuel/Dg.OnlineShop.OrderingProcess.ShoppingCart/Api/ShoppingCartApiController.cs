@@ -2,17 +2,26 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Net;
 using Chabis.Functional;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using static Dg.OnlineShop.OrderingProcess.ShoppingCart.Persistence;
 using static Dg.OnlineShop.OrderingProcess.ShoppingCart.BusinessFunctions;
 using static Dg.ShopCatalog.Persistence;
+using static Dg.Framework.Security.Login;
+using static Dg.Framework.Web.WebHelpers;
 
 namespace Dg.OnlineShop.OrderingProcess.ShoppingCart.Api
 {
     public class ShoppingCartApiController : ControllerBase
     {
+        [HttpGet]
+        [Route("api/v1/users/{userId}/shoppingCarts/{shoppingCartId}")]
+        public IActionResult Get([FromRoute] int userId, [FromRoute] int shoppingCartId) =>
+            ValidateShoppingCartId(shoppingCartId)
+                .AndThen(_ => CheckUserId(HttpContext, userId))
+                .AndThen(LoadCart)
+                .Map(MapToResponse)
+                .Match<IActionResult>(Ok, err => StatusCode((int)err));
+
         [HttpPost]
         [Route("api/v1/users/{userId}/shoppingCarts/{shoppingCartId}/items")]
         public IActionResult AddProduct(
@@ -33,22 +42,10 @@ namespace Dg.OnlineShop.OrderingProcess.ShoppingCart.Api
                 .Match<IActionResult>(Ok, err => StatusCode((int)err));
 
         [Pure]
-        private static Result<bool, HttpStatusCode> ValidateModelState(ModelStateDictionary modelState) =>
-            modelState.IsValid
-                ? (Result<bool, HttpStatusCode>)true
-                : HttpStatusCode.BadRequest;
-
-        [Pure]
         private static Result<int, HttpStatusCode> ValidateShoppingCartId(int shoppingCartId) =>
             shoppingCartId == 0
                 ? (Result<int, HttpStatusCode>)shoppingCartId
                 : HttpStatusCode.BadRequest;
-
-        [Pure]
-        private static Result<int, HttpStatusCode> CheckUserId(HttpContext context, int userId) =>
-            (int)context.Session.GetInt32("userId") == userId
-                ? (Result<int, HttpStatusCode>)userId
-                : HttpStatusCode.Forbidden;
 
         private static Result<Cart, HttpStatusCode> LoadCart(int userId) =>
             LoadShoppingCart(userId)
