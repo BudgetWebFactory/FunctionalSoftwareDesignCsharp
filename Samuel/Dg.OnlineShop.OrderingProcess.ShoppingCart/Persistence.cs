@@ -32,7 +32,7 @@ namespace Dg.OnlineShop.OrderingProcess.ShoppingCart
         public static Result<Cart, ErrorType> CreateShoppingCart(int userId) =>
             carts.ContainsKey(userId)
                 ? (Result<Cart, ErrorType>)ErrorType.CartAlreadyExists
-                : (carts = carts.Append(KeyValuePair.Create(1, new Cart(userId, new List<ShoppingCartItem>())))
+                : (carts = carts.Append(KeyValuePair.Create(userId, new Cart(userId, new List<ShoppingCartItem>())))
                     .ToDictionary(e => e.Key, e => e.Value))[userId];
     }
 
@@ -46,6 +46,8 @@ namespace Dg.OnlineShop.OrderingProcess.ShoppingCart
             UserId = userId;
             Items = items;
         }
+
+        public Cart Copy(int? userId = null, IList<ShoppingCartItem> items = null) => new Cart(userId ?? UserId, items ?? Items);
     }
 
     public readonly struct ShoppingCartItem
@@ -71,6 +73,14 @@ namespace Dg.OnlineShop.OrderingProcess.ShoppingCart
             Quantity = quantity;
         }
 
+        public ShoppingCartItem Copy(
+            ShoppingCartItemIdentifier? id = null, 
+            string brandName = null, 
+            string productName = null, 
+            decimal? price = null, 
+            int? quantity = null) =>
+            new ShoppingCartItem(id ?? Id, brandName ?? BrandName, productName ?? ProductName, price ?? Price, quantity ?? Quantity);
+
         public override string ToString() => JsonConvert.SerializeObject(this);
     }
 
@@ -94,5 +104,9 @@ namespace Dg.OnlineShop.OrderingProcess.ShoppingCart
         }
 
         public override string ToString() => JsonConvert.SerializeObject(this);
+
+        public static bool operator ==(ShoppingCartItemIdentifier left, ShoppingCartItemIdentifier right) => left.Equals(right);
+
+        public static bool operator !=(ShoppingCartItemIdentifier left, ShoppingCartItemIdentifier right) => !left.Equals(right);
     }
 }
