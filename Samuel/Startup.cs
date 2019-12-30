@@ -30,8 +30,10 @@ namespace Samuel
             services.AddDistributedMemoryCache();
             services.AddControllers();
             services.AddSession();
+            services.AddHttpContextAccessor();
             services.AddMvcCore(options => options.Filters.Add(new AuthorizationFilter()));
             Dg.Framework.FeatureToggles.IoC.Config.Configure(services);
+            Dg.OnlineShop.OrderingProcess.ShoppingCart.IoC.Config.Configure(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -5,20 +5,45 @@ using Chabis.Functional;
 using Microsoft.AspNetCore.Mvc;
 using static Dg.OnlineShop.OrderingProcess.ShoppingCart.Persistence;
 using static Dg.OnlineShop.OrderingProcess.ShoppingCart.BusinessFunctions;
-using static Dg.ShopCatalog.Persistence;
 using static Dg.Framework.Security.Login;
 using static Dg.Framework.Web.WebHelpers;
+using Microsoft.AspNetCore.Http;
+using Dg.OnlineShop.OrderingProcess.ShoppingCart.Dependencies;
+using System;
 
 namespace Dg.OnlineShop.OrderingProcess.ShoppingCart.Api
 {
     public class ShoppingCartApiController : ControllerBase
     {
+        private readonly LoadCart loadCart;
+        private readonly CreateCart createCart;
+        private readonly LoadProductBaseData loadProductBaseData;
+        private readonly LoadRetailOfferData loadRetailOfferData;
+        private readonly IHttpContextAccessor httpContextAccessor;
+
+        public ShoppingCartApiController(
+            LoadCart loadCart, 
+            CreateCart createCart, 
+            LoadProductBaseData loadProductBaseData, 
+            LoadRetailOfferData loadRetailOfferData,
+            IHttpContextAccessor httpContextAccessor)
+        {
+            this.loadCart = loadCart;
+            this.createCart = createCart;
+            this.loadProductBaseData = loadProductBaseData;
+            this.loadRetailOfferData = loadRetailOfferData;
+            this.httpContextAccessor = httpContextAccessor;
+        }
+
+        protected new HttpContext HttpContext => 
+            throw new InvalidOperationException("Do not use the built in HttpContext property because it makes the controller difficult to test.");
+
         [HttpGet]
         [Route("api/v1/users/{userId}/shoppingCarts/{shoppingCartId}")]
         public IActionResult Get([FromRoute] int userId, [FromRoute] int shoppingCartId) =>
             ValidateShoppingCartId(shoppingCartId)
-                .AndThen(_ => CheckUserId(HttpContext, userId))
-                .AndThen(LoadCart)
+                .AndThen(_ => CheckUserId(httpContextAccessor.HttpContext, userId))
+                .AndThen(GetUserCart)
                 .Map(MapToResponse)
                 .Match<IActionResult>(Ok, err => StatusCode((int)err));
 
@@ -31,8 +56,8 @@ namespace Dg.OnlineShop.OrderingProcess.ShoppingCart.Api
             [FromBody] AddProductToCartRequest request) =>
             ValidateModelState(ModelState)
                 .AndThen(_ => ValidateShoppingCartId(shoppingCartId))
-                .AndThen(_ => CheckUserId(HttpContext, userId))
-                .AndThen(LoadCart)
+                .AndThen(_ => CheckUserId(httpContextAccessor.HttpContext, userId))
+                .AndThen(GetUserCart)
                 .AndThen(c => AddToCart(c, request))
                 .Map(c => {
                     WriteShoppingCart(c);
@@ -47,16 +72,13 @@ namespace Dg.OnlineShop.OrderingProcess.ShoppingCart.Api
                 ? (Result<int, HttpStatusCode>)shoppingCartId
                 : HttpStatusCode.BadRequest;
 
-        private static Result<Cart, HttpStatusCode> LoadCart(int userId) =>
-            LoadShoppingCart(userId)
-                .Match(
-                    some => some,
-                    onNone: () => CreateShoppingCart(userId)
-                        .MapErr(e => HttpStatusCode.InternalServerError));
+        private Result<Cart, HttpStatusCode> GetUserCart(int userId) =>
+            GetCart(loadCart, createCart, userId)
+                .MapErr(_ => HttpStatusCode.InternalServerError);
 
-        private static Result<Cart, HttpStatusCode> AddToCart(Cart cart, AddProductToCartRequest request) =>
-            LoadProductBaseData(request.ProductId)
-                .AndThen(pbd => LoadRetailOffer(request.ProductId).Map(ro => (BaseData: pbd, RetailOffer: ro)))
+        private Result<Cart, HttpStatusCode> AddToCart(Cart cart, AddProductToCartRequest request) =>
+            loadProductBaseData(request.ProductId)
+                .AndThen(pbd => loadRetailOfferData(request.ProductId).Map(ro => (BaseData: pbd, RetailOffer: ro)))
                 .Map(data => AddItem(
                     cart, 
                     new ShoppingCartItem(
