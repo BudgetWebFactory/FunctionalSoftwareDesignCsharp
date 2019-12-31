@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Net;
 using Chabis.Functional;
 using Dg.Core.Testing.TestAbstractions;
 using Dg.ShopCatalog;
@@ -68,6 +69,35 @@ namespace Dg.OnlineShop.OrderingProcess.ShoppingCart.Api
             Assert.That(value, Is.AssignableTo<ShoppingCartResponse>());
             var shoppingCartResponse = (ShoppingCartResponse)value;
             Assert.That(shoppingCartResponse.Items[0].Quantity, Is.EqualTo(newQuantity));
+        }
+
+        [Test]
+        [TestCase(1)]
+        [TestCase(-1)]
+        [TestCase(int.MaxValue)]
+        [TestCase(int.MinValue)]
+        public void PostCart_InvalidCartId_ReturnsBadRequest(int cartId)
+        {
+            var request = new AddProductToCartRequest
+            {
+                ProductId = existingItem.Id.ProductId,
+                MarketplaceSupplierId = existingItem.Id.MarketplaceSupplierId,
+                SecondHandSalesOfferId = existingItem.Id.SecondHandSalesOfferId,
+                SubscriptionItemProductId = existingItem.Id.SubscriptionItemProductId,
+                Quantity = 0
+            };
+
+            var result = new ShoppingCartApiController(
+                LoadCart, 
+                CreateCart, 
+                LoadProductBaseData, 
+                LoadRetailOfferData, 
+                new HttpContextAccessor())
+                .AddProduct(0, cartId, culture, request);
+
+            Assert.That(result, Is.AssignableTo<StatusCodeResult>());
+            var resultCode = ((StatusCodeResult)result).StatusCode;
+            Assert.That(resultCode, Is.EqualTo((int)HttpStatusCode.BadRequest));
         }
 
         private const int userIdWithExistingCart = 1;
