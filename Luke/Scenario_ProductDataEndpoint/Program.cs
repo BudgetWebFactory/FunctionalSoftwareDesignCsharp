@@ -6,16 +6,8 @@ namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
     {
         public static void Main(string[] args)
         {
-            // CUSTOM PIPELINE VERSION
-
-            //var product = ProductEndpointFunctions.GetProduct(55555);
-            //Console.WriteLine(product.Serialized);
-
-            var productSafely = ProductEndpointFunctions.GetProductSafely(333); // with error handling
-            Console.WriteLine(productSafely.Serialized);
-
-            /* DELEGATE VERSION
-
+            // DELEGATES (WITH EXCEPTIONS)
+            
             try
             {
                 var productDelegate = ProductEndpointFunctions.GetProductDelegate(666666);
@@ -26,7 +18,18 @@ namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
             {
                 Console.WriteLine(e);
                 Console.WriteLine("error response.");
-            }*/
+            }
+
+            // CUSTOM PIPELINE WITH FUNCS
+
+            var product = ProductEndpointFunctions.GetProduct(55555);
+            Console.WriteLine(product.Serialized);
+
+            // ERROR HANDLING EXTENSION
+
+            var productSafely = ProductEndpointFunctions.GetProductSafely(333); // with error handling
+            Console.WriteLine(productSafely.Serialized);
+
         }
     }
 }

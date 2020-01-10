@@ -57,6 +57,8 @@ This way you don't have to worry about return types; it's drawback may be that t
 "Error" is a difficult thing in functional terms; pure functional languages sometimes don't even know "errors" terminology, to them these are only "execution paths" (which they are in essence technically).
 But I took it into my approach to ease critics; you can provide "error functions" in the pipeline which are triggered in case there went something "differently / not as expected" (look for "Safely" affix).
 
+To have error handling in the delegate version I used "good old" exception handling which seems to work flawlessly with delegates.
+
 ### Part 4: Automated Testing
 
 To me this aspect is the most thrilling about functional design; if you design your software with independent functions all you have to test are these functions, once for all.
