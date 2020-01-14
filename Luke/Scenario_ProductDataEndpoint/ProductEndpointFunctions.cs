@@ -35,6 +35,7 @@ namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
                 ErrorFunctions.ErrorFunction errorFn)>
             {
                 (ProductFunctions.GetProductWithError, HandleProductError),
+                // additional safe functions...
                 (Serialize, e => Console.WriteLine(e))
             };
 
@@ -44,7 +45,7 @@ namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
 
         private static void HandleProductError(Exception e)
         {
-            Console.WriteLine("errroooooroooo", e);
+            Console.WriteLine("we all gonna die...", e);
         }
 
         delegate ProductEndpointResult PipelineStep(ProductEndpointResult input);
