@@ -5,7 +5,7 @@ using System.Text.Json;
 
 namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
 {
-    static class ProductEndpointFunctions
+    internal static class ProductEndpointFunctions
     {
         public static ProductEndpointResult GetProduct(long id)
         {
@@ -48,7 +48,7 @@ namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
             Console.WriteLine("we all gonna die...", e);
         }
 
-        delegate ProductEndpointResult PipelineStep(ProductEndpointResult input);
+        private delegate ProductEndpointResult PipelineStep(ProductEndpointResult input);
 
         public static ProductEndpointResult GetProductDelegate(long id)
         {
@@ -57,7 +57,7 @@ namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
                 GetComments +
                 (product =>
                     {
-                        throw new Exception("nooooooooo!!!!");
+                        throw new Exception("noooot handlet delegate exception!!!!");
                         product.ratings = FilterRatings(product.ratings, 3);
                         return product;
                     }) +
@@ -66,32 +66,93 @@ namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
             return pipeline(new ProductEndpointResult{ id = id});
         }
 
-        static List<Rating> FilterRatings(List<Rating> ratings, int starThreshold)
+        private static List<Rating> FilterRatings(List<Rating> ratings, int starThreshold)
         {
             return ratings.Where(r => r.stars >= starThreshold).ToList();
         }
 
-        static ProductEndpointResult GetComments(ProductEndpointResult productEndpointResult)
+        private static ProductEndpointResult GetComments(ProductEndpointResult productEndpointResult)
         {
             productEndpointResult.comments = CommunityFunctions.GetComments(productEndpointResult.id);
 
             return productEndpointResult;
         }
 
-        static ProductEndpointResult Serialize(ProductEndpointResult productEndpointResult)
+        private static ProductEndpointResult Serialize(ProductEndpointResult productEndpointResult)
         {
             productEndpointResult.Serialized = JsonSerializer.Serialize(productEndpointResult);
 
             return productEndpointResult;
         }
 
-        static ProductEndpointResult GetCommunity(ProductEndpointResult productEndpointResult)
+        private static ProductEndpointResult GetCommunity(ProductEndpointResult productEndpointResult)
         {
             var pipeline = (PipelineStep)
                CommunityFunctions.GetRatings +
                CommunityFunctions.GetComments;
 
             return pipeline(productEndpointResult);
+        }
+
+        public static Func<ProductEndpointResult, ProductEndpointResult> GetProductComposition()
+        {
+            var replaceBadWordsFn = new Func<ProductEndpointResult, ProductEndpointResult>(x =>
+            {
+                x.comments = x.comments.Select(c =>
+                {
+                    c.text = c.text.Replace("bad", "good");
+                    return c;
+                }).ToList();
+
+                return x;
+            });
+
+            var erroneousFn = new Func<ProductEndpointResult, ProductEndpointResult>(x =>
+            {
+                x.comments.First();
+
+                return x;
+            });
+
+            Func<ProductEndpointResult, Exception, ProductEndpointResult> errorAlertFn =
+                (state, exception) =>
+                {
+                    Console.WriteLine("--- ERROR ALERT ---");
+                    Console.WriteLine(exception.Message);
+                    Console.WriteLine("--- --- ---");
+
+                    return state;
+                };
+
+            Func<ProductEndpointResult, Exception, ProductEndpointResult> errorHandlingFn =
+                (state, exception) =>
+                {
+                    Console.WriteLine("--- ERROR HANDLING ---");
+                    state.errorMessages.Add(exception.Message);
+                    Console.WriteLine("Error message added.");
+                    Console.WriteLine("--- --- ---");
+
+                    return state;
+                };
+
+            var composedErroneousFns = CompositionFunctions.GetComposedFunc(
+                errorHandlingFn,
+                (erroneousFn, errorAlertFn),
+                (erroneousFn, errorHandlingFn));
+
+            return CompositionFunctions.GetComposedFunc(
+                errorHandlingFn,
+                    (ProductFunctions.GetProduct, errorAlertFn),
+                composedErroneousFns,
+                (CommunityFunctions.GetComments, errorAlertFn),
+                (CommunityFunctions.GetRatings, errorAlertFn),
+                (replaceBadWordsFn, errorAlertFn),
+                (Serialize, errorAlertFn),
+                (x =>
+                {
+                    Console.WriteLine(x.Serialized);
+                    return x;
+                }, errorAlertFn)).Item1; // side effected func included
         }
     }
 
@@ -107,6 +168,9 @@ namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
         {
             ratings = new List<Rating>();
             comments = new List<Comment>();
+            errorMessages = new List<string>();
         }
+
+        public List<string> errorMessages { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 
 namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
 {
@@ -7,7 +8,7 @@ namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
         public static void Main(string[] args)
         {
             // DELEGATES (WITH EXCEPTIONS)
-            
+
             try
             {
                 var productDelegate = ProductEndpointFunctions.GetProductDelegate(666666);
@@ -30,6 +31,9 @@ namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
             var productSafely = ProductEndpointFunctions.GetProductSafely(333); // with error handling
             Console.WriteLine(productSafely.Serialized);
 
+            // FUNCS COMPOSITION
+
+            ProductEndpointFunctions.GetProductComposition()(new ProductEndpointResult{ id = 4444 });
         }
     }
 }

@@ -63,7 +63,15 @@ namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
                     id = 111111,
                     text = "Ho ho ho!"
                 }
-             );
+            );
+
+            productEndpointResult.comments.Add(
+                new Comment
+                {
+                    id = 111111,
+                    text = "This is bad!"
+                }
+            );
 
             return productEndpointResult;
         }

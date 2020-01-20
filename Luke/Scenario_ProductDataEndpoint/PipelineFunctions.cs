@@ -19,7 +19,7 @@ namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
             TContract source,
             List<(Func<TContract, TContract> fn, ErrorFunctions.ErrorFunction errorFn)> steps)
         {
-            // this "safer" implementation demands error fns which will be processed in case of an error and
+            // this "safe" implementation demands error fns which will be processed in case of an error and
             // provided by the consumer of the pipeline to preserve control over it by the caller
 
             return steps.Aggregate(

@@ -20,7 +20,7 @@ namespace Dg.OnlineShop.OrderingProcess.ShoppingCart
                             price: 12.35m,
                             quantity: 10
                         )
-                    }
+                    }.AsReadOnly()
                 ) }
             };
 
@@ -44,15 +44,16 @@ namespace Dg.OnlineShop.OrderingProcess.ShoppingCart
     public readonly struct Cart
     {
         public readonly int UserId;
-        public readonly IList<ShoppingCartItem> Items;
+        public readonly IReadOnlyList<ShoppingCartItem> Items;
 
-        public Cart(int userId, IList<ShoppingCartItem> items)
+        public Cart(int userId, IReadOnlyList<ShoppingCartItem> items)
         {
             UserId = userId;
             Items = items;
         }
 
-        public Cart Copy(int? userId = null, IList<ShoppingCartItem> items = null) => new Cart(userId ?? UserId, items ?? Items);
+        public Cart Copy(int? userId = null, IReadOnlyList<ShoppingCartItem> items = null) => 
+            new Cart(userId ?? UserId, items ?? Items);
     }
 
     public readonly struct ShoppingCartItem
