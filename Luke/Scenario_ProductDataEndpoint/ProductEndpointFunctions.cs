@@ -78,7 +78,7 @@ namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
             return productEndpointResult;
         }
 
-        static ProductEndpointResult Serialize(ProductEndpointResult productEndpointResult)
+        public static ProductEndpointResult Serialize(ProductEndpointResult productEndpointResult)
         {
             productEndpointResult.Serialized = JsonSerializer.Serialize(productEndpointResult);
 

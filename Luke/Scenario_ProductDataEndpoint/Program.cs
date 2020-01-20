@@ -33,7 +33,7 @@ namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
 
             // FUNCS COMPOSITION
 
-            var removeBadWordsFn = new Func<ProductEndpointResult, ProductEndpointResult>(x =>
+            var replaceBadWordsFn = new Func<ProductEndpointResult, ProductEndpointResult>(x =>
             {
                 x.comments = x.comments.Select(c =>
                 {
@@ -44,13 +44,14 @@ namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
                 return x;
             });
 
-            var productFunc = CompositionFunctions.GetComposedFunc(
-                ProductFunctions.GetProduct,
-                CommunityFunctions.GetComments,
-                CommunityFunctions.GetRatings,
-                removeBadWordsFn);
-            var r = productFunc(new ProductEndpointResult());
-            Console.WriteLine(r);
+            CompositionFunctions.GetComposedFunc(
+                    ProductFunctions.GetProduct,
+                    CommunityFunctions.GetComments,
+                    CommunityFunctions.GetRatings,
+                    replaceBadWordsFn,
+                    ProductEndpointFunctions.Serialize,
+                    x => { Console.WriteLine(x.Serialized); return x;}) // side effected func included
+                (new ProductEndpointResult());
         }
     }
 }
