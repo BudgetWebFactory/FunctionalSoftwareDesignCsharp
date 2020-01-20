@@ -2,8 +2,8 @@
 
 ## tl;dr:
 
-- Basic functional design is possible in C#
-- More concise, reusable and readable code
+- Basic functional design (i.e. pipelines, composition) is possible in C#
+- More concise, more reusable and more readable code
 - Some Object-oriented "boilerplate" code is not avoidable
 - Delegates are usable but not ideal for function composition
 - Strong typing makes functional design harder to realize
@@ -67,7 +67,7 @@ To me this aspect is the most thrilling about functional design; if you design y
 
 I desided to go one step further; instead of "just" pipeline funcs I could extend this setup to go fully **compositional**. So I aggregate funcs to a func of same definition. This way we get en even more dynamic and lightweight solution for functional design style function composition, because this way we can compose funcs and error funcs as deep and wide as we want.
 
-**One thing to stress here is that in such approaches, pipelining and composition, the degree of which you want to "nest" and "chain" your functions is unlimited, which to me is the most powerfull aspect of functional software design.**
+**IMPORTANT: One thing to stress here is that in such approaches, pipelining and composition, the degree of which you want to "nest" and "chain" your functions is unlimited, which to me is the most powerfull aspect of functional software design!**
 
 ## Learnings & Conclusion
 
