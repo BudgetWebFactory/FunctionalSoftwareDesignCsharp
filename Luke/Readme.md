@@ -64,18 +64,18 @@ To have error handling in the delegate version I used "good old" exception handl
 To me this aspect is the most thrilling about functional design; if you design your software with independent functions all you have to test are these functions, once for all.
 Problem can only accur in changing the "return type" passed arround and luckily C# helps with its types very well in doing so.
 
-## Part 5: Funcs Composition
+### Part 5: Funcs Composition (with error handling)
 
-I desided to go one step further; instead of "just" pipeline funcs, we could harvest this setup to go fully compositional. So I aggregate a collection of funcs to an func of same definition. This way we get en even more dynamic and lightweight solution for functional design style function composition.
+I desided to go one step further; instead of "just" pipeline funcs, we could extend this setup to go fully compositional. So I aggregate funcs to a func of same definition. This way we get en even more dynamic and lightweight solution for functional design style function composition, because this way we can compose funcs and error funcs as deep and wide as we want.
 
 ## Learnings & Conclusion
 
 Functional software design is possible in C# but with rudimentary drawbacks in terms of effort and complexity (compared to functional languages).
 The nature and origin of C# as a object-oriented language is of course not suitable for that and forced me several times to make unnecessary boilerplate code (static classes and static methods) and types ("binding type").
-Nevertheless I managed to realize my desired approaches to a fully functional software design which is in my opinion more readable, more compact and more reusable.
+**Nevertheless I managed to realize my desired approaches to a fully functional software design which is in my opinion more readable, more concise and more reusable.**
 
 ## Comparison to Samuel's approach & solution
 
-Samuel has a more "grounded" approach than me; he was guided by the existing setup and enriched it with functional "blessing" by injecting functions instead of objects into objects (controller) and (literally) "mapping" functions together with Chabis.Funcitonal functionalities.
+Samuel has a more "grounded" approach than me; he was guided by the existing object-oriented setup and enriched it with functional "blessing" by injecting functions instead of objects into objects (controller) and (literally) "mapping" functions together with Chabis.Funcitonal functionalities.
 This way he preserved all advantages of an object-oriented approach and adds functional programming to it (as Chabis.Functional already does).
 On the other hand to me that isn't a fully functional design approach because of my definition above, although it has by itself many advantages over a pure object-oriented approach.
