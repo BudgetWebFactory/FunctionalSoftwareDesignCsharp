@@ -5,23 +5,28 @@ namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
 {
     public static class CompositionFunctions
     {
-        public static Func<TBind, TBind>
-            GetComposedFunc<TBind>(params (Func<TBind, TBind>, Func<TBind, Exception, TBind>)[] funcs)
+        public static (Func<TBind, TBind>, Func<TBind, Exception, TBind>)
+            GetComposedFunc<TBind>(Func<TBind, Exception, TBind> errorFunc, params (Func<TBind, TBind>, Func<TBind, Exception, TBind>)[] funcs)
         {
-            return x =>
+            return (x =>
             {
-                return funcs.Aggregate(x, (state, step) =>
+                TBind state = x;
+
+                foreach (var func in funcs)
                 {
                     try
                     {
-                        return step.Item1(state);
+                        state = func.Item1(state);
                     }
                     catch (Exception e)
                     {
-                        return step.Item2(state, e);
+                        state = func.Item2(state, e);
+                        break; // optionally we could change this behavior (ex. moving along to the next func in case of an error)
                     }
-                });
-            };
+                }
+
+                return state;
+            }, (x, exception) => errorFunc(x, exception));
         }
     }
 }

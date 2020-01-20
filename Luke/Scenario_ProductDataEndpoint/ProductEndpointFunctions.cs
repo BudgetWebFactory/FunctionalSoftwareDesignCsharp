@@ -135,10 +135,15 @@ namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
                     return state;
                 };
 
-            return CompositionFunctions.GetComposedFunc(
-                (ProductFunctions.GetProduct, errorAlertFn),
+            var composedErroneousFns = CompositionFunctions.GetComposedFunc(
+                errorHandlingFn,
                 (erroneousFn, errorAlertFn),
-                (erroneousFn, errorHandlingFn),
+                (erroneousFn, errorHandlingFn));
+
+            return CompositionFunctions.GetComposedFunc(
+                errorHandlingFn,
+                    (ProductFunctions.GetProduct, errorAlertFn),
+                composedErroneousFns,
                 (CommunityFunctions.GetComments, errorAlertFn),
                 (CommunityFunctions.GetRatings, errorAlertFn),
                 (replaceBadWordsFn, errorAlertFn),
@@ -147,7 +152,7 @@ namespace LukeCsharpFPScenarios.Scenario_ProductDataEndpoint
                 {
                     Console.WriteLine(x.Serialized);
                     return x;
-                }, errorAlertFn)); // side effected func included
+                }, errorAlertFn)).Item1; // side effected func included
         }
     }
 
