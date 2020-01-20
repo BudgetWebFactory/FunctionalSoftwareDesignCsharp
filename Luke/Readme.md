@@ -44,7 +44,7 @@ I wondered why they haven't been used more often;.now I know why.
 As many constructs in "non-functional" languages delegates are a step towards functional design, but only a step.
 The biggest drawback is its "strong-typedness" - which isn't surprising in a strict type language - so that all functions implementing a delegate have to have the same "signature" (a delegate is like an interface for functions isntead of objects).
 
-### Part 2: Funcs
+### Part 2: Funcs Pipeline
 
 Funcs let you declare functions, but to achieve a "composition" you have to implement it by yoursef, what I did simply with a list of funcs and means to call the funcs of that list in order (see PipelineFunctions class).
 But there again; in composing functions together you are forced to have a matching return value over all functions in the composition (at least you don't implement laborious "binding-functions").
@@ -63,6 +63,10 @@ To have error handling in the delegate version I used "good old" exception handl
 
 To me this aspect is the most thrilling about functional design; if you design your software with independent functions all you have to test are these functions, once for all.
 Problem can only accur in changing the "return type" passed arround and luckily C# helps with its types very well in doing so.
+
+## Part 5: Funcs Composition
+
+I desided to go one step further; instead of "just" pipeline funcs, we could harvest this setup to go fully compositional. So I aggregate a collection of funcs to an func of same definition. This way we get en even more dynamic and lightweight solution for functional design style function composition.
 
 ## Learnings & Conclusion
 
