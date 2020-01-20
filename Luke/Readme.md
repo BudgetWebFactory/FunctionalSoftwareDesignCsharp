@@ -61,12 +61,13 @@ To have error handling in the delegate version I used "good old" exception handl
 
 ### Part 4: Automated Testing
 
-To me this aspect is the most thrilling about functional design; if you design your software with independent functions all you have to test are these functions, once for all.
-Problem can only accur in changing the "return type" passed arround and luckily C# helps with its types very well in doing so.
+To me this aspect is the most thrilling about functional design; if you design your software with independent functions all you have to test are these functions and their correct order of composition/pipelining, once for all and you are done.
 
 ### Part 5: Funcs Composition (with error handling)
 
 I desided to go one step further; instead of "just" pipeline funcs I could extend this setup to go fully **compositional**. So I aggregate funcs to a func of same definition. This way we get en even more dynamic and lightweight solution for functional design style function composition, because this way we can compose funcs and error funcs as deep and wide as we want.
+
+**One thing to stress here is that in such approaches, pipelining and composition, the degree of which you want to "nest" and "chain" your functions is unlimited, which to me is the most powerfull aspect of functional software design.**
 
 ## Learnings & Conclusion
 
