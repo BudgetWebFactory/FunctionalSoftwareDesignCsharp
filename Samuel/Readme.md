@@ -73,24 +73,62 @@ The third goal was the easiest to achieve. Unfortunately, C# forces you to place
 classes. So I declared the classes static and refrained from using static state (except for my
 "in-memory database" classes).
 
+The following two illustrations show the differences in the required methods/functions and the
+dependencies between them:
+
+[Overview current approach in the devinite repository](./analysis/MethodDependenciesDevinite.png)
+
+[Overview my functional approach](./analysis/MethodDependenciesFunctional.png)
+
+I acknowledge that this comparison is somewhat flawed in that the current implementation in the
+devinite repository provides more functionality than my version. To keep the comparison as fair
+as possible I included only the methods that are required to achieve the same functionality that I 
+provide in my example.
+
 ## Learnings
 
-0. Thinking in small, self-contained functions seemed to favour the reusability of the code. When I added a GET endpoint for the shopping cart API after having implemented the POST endpoint for cart items I could re-compose the existing functions without needing to write new ones. It would be interesting to see, how to handling a rising need for performance optimization.
+0. Thinking in small, self-contained functions seemed to favour the reusability of the code. When I 
+added a GET endpoint for the shopping cart API after having implemented the POST endpoint for cart 
+items I could re-compose the existing functions without needing to write new ones. It would be 
+interesting to see, how to handling a rising need for performance optimization.
 
-0. For this lab I heavily relied on the existing Chabis.Functional library. This allowed me to write well structured and easy to read code quickly. Common complexities are abtracted in the Option and Result classes. In my experience, whithout this complexity the self-written code tends to be much simpler and therefor better suited for reusing it.
+0. For this lab I heavily relied on the existing Chabis.Functional library. This allowed me to write 
+well structured and easy to read code quickly. Common complexities are abtracted in the Option and 
+Result classes. In my experience, whithout this complexity the self-written code tends to be much 
+simpler and therefor better suited for reusing it.
 
-0. Testing the code was super easy. I avoided state where possible and made as many methods pure. This gave me great flexibilty when writing the test.
+0. Testing the code was super easy. I avoided state where possible and made as many methods pure. 
+This gave me great flexibilty when writing the test.
 
-0. I strictly separated functions contianing business logic from mapper functions in the "UI layer". For instance, the `AddItem(...)` function could have returned `Result<Cart, HttpStatusCode>` directly. Because in my scenario this operation cannot fail I opted to always just return a cart and map the response in the controller instead. This makes it possible to use the function in other places without having to deal with the `HttpStatusCode`.
+0. I strictly separated functions contianing business logic from mapper functions in the "UI layer". 
+For instance, the `AddItem(...)` function could have returned `Result<Cart, HttpStatusCode>` directly. 
+Because in my scenario this operation cannot fail I opted to always just return a cart and map the 
+response in the controller instead. This makes it possible to use the function in other places without 
+having to deal with the `HttpStatusCode`.
 
-0. Although I clearly see its benefits the mapping in C# was still tedious. Unfortunately there is no spread operator like in JavaScript and the type system requires the programmer to specify almost everything explicitly. Switching to F# for example would have made this significantly easier.
+0. Although I clearly see its benefits the mapping in C# was still tedious. Unfortunately there is no 
+spread operator like in JavaScript and the type system requires the programmer to specify almost 
+everything explicitly. Switching to F# for example would have made this significantly easier.
 
-0. Despite the promises made by Mark Seeman not everything comes automatically when using the functional paradigm. You still need to make sure to highlight important business rules in your code instead of hiding it. However, i found it much easier to do so compared to OOP.
+0. Despite the promises made by Mark Seeman not everything comes automatically when using the functional 
+paradigm. You still need to make sure to highlight important business rules in your code instead of hiding 
+it. However, i found it much easier to do so compared to OOP.
 
-0. Testing a controller is still not trivial. By separating the code in a sensible way it is possible, though.
+0. Testing a controller is still not trivial. By separating the code in a sensible way it is possible, 
+though.
 
 ## Conclusion
-In my oppinion it can be highly beneficial to borrow concepts from the funcitonal world even when working in C#. Immutability and the idea of pure functions tend to make the code much easier to understand and therefor easier to expand and to fix. The benefit of increased testability should also lead to more stable code. (>>>> What about separating data and functions? Object with immutable (private) fields and instance methods? <<<<<). If you are free from constraints and decide to use the functional paradigm fully in a project, I would recommend to look into using a functional programming language instead. Even though C# could be labelled as a multi-paradigm language it contians many obstacles and inconveniences when following a functional approach.
+In my oppinion it can be highly beneficial to borrow concepts from the funcitonal world even when working 
+in C#. Immutability and the idea of pure functions tend to make the code much easier to understand and 
+therefor easier to expand and to fix. The benefit of increased testability should also lead to more stable 
+code. (>>>> What about separating data and functions? Object with immutable (private) fields and instance
+ methods? <<<<<). If you are free from constraints and decide to use the functional paradigm fully in a 
+ project, I would recommend to look into using a functional programming language instead. Even though C# 
+ could be labelled as a multi-paradigm language it contians many obstacles and inconveniences when following 
+ a functional approach.
 
 ## The future of the lab
-Now that the lab is completed I would like to discuss your opinion on that matter. Where do you see benefits and disadvantages of functional programming? Do you know an interesting use case for the comparison between FP and OOP I did not include? Du you have any questions I might be able to answer? Please do reach out on MS Teams or via email (samuel.bittmann@digitecgalaxus.ch).
+Now that the lab is completed I would like to discuss your opinion on that matter. Where do you see benefits 
+and disadvantages of functional programming? Do you know an interesting use case for the comparison between 
+FP and OOP I did not include? Du you have any questions I might be able to answer? Please do reach out on MS 
+Teams or via email (samuel.bittmann@digitecgalaxus.ch).
