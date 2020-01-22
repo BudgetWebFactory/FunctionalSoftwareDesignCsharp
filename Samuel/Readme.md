@@ -1,7 +1,13 @@
 # Part 2: Samuels lab
 
-## Introduction
-Abstract? Overview.
+## tl;dr
+In my lab I wanted to see how we could implement core principles of functional programming in our
+monolith code base while still using C# and what benefits and drawbacks that brings with it. I
+rebuilt a subset of the functionality of the "get feature toggles" and the "post shopping cart item"
+APIs. For that I used the existing `Chabis.Functional` library. I could achieve all my goals without
+much effort. In my oppinion the code I wrote using a functional approach is more concise, more
+readable, points to the underlying business rules more clearly and is easier to test than the code
+currently in production.
 
 ## My approach
 My goal was to highlight key benefits and disadvantages of software design used in both Object 
@@ -15,15 +21,17 @@ able to build an exact replica of both APIs due to the time limit. However, in m
 selected feature set for both endpoints represent challenging real world examples which allow for 
 comparing the production code written with OOP in mind with my FP approach.
 
-When shaping my design for the code I especially regarded the following principles:
+When shaping my design for the code I especially followed the following principles:
 
 1. The amount of pure functions, i.e. funcitons that only depend on its input variables and do not 
 trigger any side effects, should be maximized. This leads to code that is easier to understand and 
-to test, as Mark Seeman pointed out in his talk [?].
-2. Mutable state should be avoided fully since it can quickly lead to convoluted, and thus, overly 
+to test, as Mark Seeman pointed out in his talk about functional design [1].
+2. Mutable state should be avoided fully since it can quickly lead to convoluted and thus overly 
 complex code.
-3. Data and functions are to be strictly separated. This, of course, is a core principle of 
+3. Data and functions are to be strictly separated. This is of course a core principle of 
 functional programming.
+
+Because I did not want to start from scratch I used the existing `Chaibs.Functional` library. This library provides Types for optional values, results, and more.
 
 ## Scenario 1: GET feature toggles
 I rebuilt the following functionality of the "get feature toggles" APi:
@@ -73,17 +81,18 @@ The third goal was the easiest to achieve. Unfortunately, C# forces you to place
 classes. So I declared the classes static and refrained from using static state (except for my
 "in-memory database" classes).
 
-The following two illustrations show the differences in the required methods/functions and the
-dependencies between them:
+The following two illustration shows the methods of the devinite code base that are necessary to fulfill the "post shopping cart item" API request and the dependencies between the methods:
 
-[Overview current approach in the devinite repository](./analysis/MethodDependenciesDevinite.png)
+![Overview current approach in the devinite repository](./analysis/MethodDependenciesDevinite.png)
 
-[Overview my functional approach](./analysis/MethodDependenciesFunctional.png)
+Now compare this with the same illustration of my approach:
+
+![Overview my functional approach](./analysis/MethodDependenciesFunctional.png)
 
 I acknowledge that this comparison is somewhat flawed in that the current implementation in the
 devinite repository provides more functionality than my version. To keep the comparison as fair
 as possible I included only the methods that are required to achieve the same functionality that I 
-provide in my example.
+provide in my example. Having said that, I find it much easier to comprehend what is going on when looking at my approach. 
 
 ## Learnings
 
@@ -118,7 +127,7 @@ it. However, i found it much easier to do so compared to OOP.
 though.
 
 ## Conclusion
-In my oppinion it can be highly beneficial to borrow concepts from the funcitonal world even when working 
+In my oppinion it can be highly beneficial to borrow concepts from the functional world even when working 
 in C#. Immutability and the idea of pure functions tend to make the code much easier to understand and 
 therefor easier to expand and to fix. The benefit of increased testability should also lead to more stable 
 code. (>>>> What about separating data and functions? Object with immutable (private) fields and instance
@@ -127,8 +136,14 @@ code. (>>>> What about separating data and functions? Object with immutable (pri
  could be labelled as a multi-paradigm language it contians many obstacles and inconveniences when following 
  a functional approach.
 
+## Comparison to Lukes approach
+While I focused on the feasibility of using functional principles in our existing code base, Luke investigated the capabilites of C# and how the language could facilitate his desired design that uses function composition / pipelines. I think my findings could find its way more quickly into our productive code base because it requires less change in the way we write code while Lukes result might influence the design of our software more in the long run since his approach is fundamentally different from our current thinking. I have to admit, though, that I still dont understand its benefits and drawbacks fully. Something I am sure will change during future discussion and experimentation.
+
 ## The future of the lab
 Now that the lab is completed I would like to discuss your opinion on that matter. Where do you see benefits 
 and disadvantages of functional programming? Do you know an interesting use case for the comparison between 
 FP and OOP I did not include? Du you have any questions I might be able to answer? Please do reach out on MS 
 Teams or via email (samuel.bittmann@digitecgalaxus.ch).
+
+## References / further "reading"
+[1] 
