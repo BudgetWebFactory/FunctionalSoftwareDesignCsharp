@@ -134,8 +134,7 @@ significantly easier.
 In my oppinion it can be highly beneficial to borrow concepts from the functional world even when working 
 in C#. Immutability and the idea of pure functions tend to make the code much easier to understand and 
 therefor easier to expand and to fix. The benefit of increased testability should also lead to more stable 
-code. (>>>> What about separating data and functions? Object with immutable (private) fields and instance
- methods? <<<<<). If you are free from constraints and decide to use the functional paradigm fully in a 
+code. If you are free from constraints and decide to use the functional paradigm fully in a 
  project, I would recommend to look into using a functional programming language instead. Even though C# 
  could be labelled as a multi-paradigm language it contians many obstacles and inconveniences when following 
  a functional approach.
